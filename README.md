@@ -1,20 +1,27 @@
-# Gatry – Módulo web de gestión de proveedores
+# Gatry – Módulos web de gestión de proveedores y clientes
 
 ## 1. Descripción del proyecto
 
-Módulo web desarrollado para **Gatry Security & Technology**, orientado a la gestión de proveedores dentro del sistema de administración de clientes, proyectos, cotizaciones, servicios técnicos e instalaciones de seguridad electrónica.
+Aplicación web desarrollada para **Gatry Security & Technology**, orientada a la administración de información de proveedores y clientes dentro del sistema de gestión de servicios de seguridad electrónica.
 
-Este módulo permite administrar la información básica de los proveedores mediante operaciones CRUD (Crear, Consultar, Actualizar y Eliminar), utilizando una aplicación web conectada a una base de datos MySQL.
+Actualmente, el proyecto cuenta con dos módulos CRUD (Crear, Consultar, Actualizar y Eliminar), conectados a una base de datos MySQL.
 
 ## 2. Funcionalidades
 
-- Registrar nuevos proveedores.
-- Consultar los proveedores almacenados en la base de datos.
-- Actualizar la información de proveedores existentes.
-- Eliminar proveedores registrados.
-- Validar los campos obligatorios de los formularios.
-- Mostrar mensajes de confirmación y error.
-- Proteger la salida de datos dinámicos mediante escape de caracteres HTML.
+### Módulo de proveedores
+- Registrar proveedores.
+- Consultar proveedores registrados.
+- Actualizar información de proveedores.
+- Eliminar proveedores.
+
+### Módulo de clientes
+- Registrar clientes.
+- Consultar clientes registrados.
+- Buscar clientes por identificador.
+- Actualizar información de clientes.
+- Eliminar clientes.
+
+Ambos módulos incluyen validación de datos, mensajes de resultado y protección de la salida dinámica mediante escape de caracteres HTML.
 
 ## 3. Tecnologías utilizadas
 
@@ -29,19 +36,17 @@ Este módulo permite administrar la información básica de los proveedores medi
 | Apache Tomcat 10.1 | Servidor de aplicaciones |
 | HTML5 | Estructura de las vistas |
 | CSS3 | Presentación e interfaz gráfica |
-| Git | Control de versiones |
+| Git y GitHub | Control de versiones y repositorio remoto |
 
-## 4. Arquitectura del módulo
+## 4. Arquitectura del proyecto
 
-El proyecto utiliza una separación de responsabilidades entre las clases encargadas de la conexión, el acceso a datos, el modelo, el controlador y la vista.
+El proyecto utiliza una arquitectura MVC (Modelo-Vista-Controlador), con separación de responsabilidades entre los modelos, los objetos de acceso a datos, los controladores y las vistas.
 
 ```text
 gatry-proveedores-web/
 │
 ├── pom.xml
-│
 ├── .gitignore
-│
 ├── README.md
 │
 └── src/
@@ -49,65 +54,67 @@ gatry-proveedores-web/
         ├── java/
         │   └── com/
         │       └── gatry/
-        │           └── proveedores/
-        │               ├── Conexion.java
-        │               ├── Proveedor.java
-        │               ├── ProveedorDAO.java
-        │               │
+        │           ├── proveedores/
+        │           │   ├── Conexion.java
+        │           │   ├── Proveedor.java
+        │           │   ├── ProveedorDAO.java
+        │           │   └── controller/
+        │           │       └── ProveedorServlet.java
+        │           │
+        │           └── clientes/
+        │               ├── Cliente.java
+        │               ├── ClienteDAO.java
         │               └── controller/
-        │                   └── ProveedorServlet.java
+        │                   └── ClienteServlet.java
         │
         └── webapp/
             └── WEB-INF/
                 └── views/
-                    └── proveedores.jsp
+                    ├── proveedores.jsp
+                    └── clientes.jsp
 ```
 
 ### Responsabilidad de los componentes
 
-- **Conexion.java:** establece la conexión con la base de datos MySQL.
-- **Proveedor.java:** representa la entidad proveedor y sus atributos.
-- **ProveedorDAO.java:** implementa las operaciones de acceso y manipulación de datos.
-- **ProveedorServlet.java:** recibe y procesa las solicitudes HTTP mediante los métodos GET y POST.
-- **proveedores.jsp:** presenta los formularios y la información de los proveedores.
+- **Conexion.java:** establece la conexión con MySQL.
+- **Proveedor.java y Cliente.java:** representan los modelos de datos de cada módulo.
+- **ProveedorDAO.java y ClienteDAO.java:** implementan las operaciones de acceso y manipulación de datos mediante JDBC.
+- **ProveedorServlet.java y ClienteServlet.java:** reciben y procesan las solicitudes HTTP.
+- **proveedores.jsp y clientes.jsp:** presentan los formularios y la información de cada módulo.
 
 ## 5. Requisitos del entorno
 
-Para ejecutar el proyecto se requiere:
-
-- JDK 21 o compatible con la versión configurada.
+- JDK 21.
 - Apache Maven 3.8.7 o superior.
 - Apache Tomcat 10.1.
 - MySQL Server.
 - Base de datos `gatry_db`.
-- Controlador JDBC de MySQL, administrado mediante Maven.
+- Controlador JDBC de MySQL administrado mediante Maven.
 
 ## 6. Configuración de la conexión
 
-La aplicación utiliza las siguientes variables de entorno para establecer la conexión con MySQL:
+La aplicación utiliza variables de entorno para conectarse a MySQL:
 
 | Variable | Descripción |
 |---|---|
 | `GATRY_DB_USER` | Usuario de conexión a MySQL |
 | `GATRY_DB_PASSWORD` | Contraseña del usuario de conexión |
 
-Estas variables deben configurarse en el entorno donde se ejecute Tomcat.
+Las credenciales deben configurarse en el entorno donde se ejecute Tomcat. No deben almacenarse directamente en el código fuente ni publicarse en el repositorio.
 
-**Importante:** las credenciales no se almacenan directamente en el código fuente ni deben publicarse en el repositorio.
-
-La base de datos utilizada por el módulo es `gatry_db`. La tabla requerida para su funcionamiento es `Proveedor`, de acuerdo con la estructura de la base de datos del proyecto Gatry.
+Los módulos utilizan las tablas `Proveedor` y `Cliente` de la base de datos `gatry_db`.
 
 ## 7. Construcción del proyecto
 
-Ubicarse en el directorio raíz del proyecto y ejecutar:
+Desde el directorio raíz, ejecutar:
 
 ```bash
 mvn clean package
 ```
 
-Este comando limpia los archivos generados anteriormente, compila el código fuente y construye el archivo WAR.
+El comando limpia los archivos generados anteriormente, compila el código y construye el archivo WAR.
 
-El artefacto generado se encuentra en:
+Artefacto generado:
 
 ```text
 target/gatry-proveedores-web.war
@@ -115,52 +122,79 @@ target/gatry-proveedores-web.war
 
 ## 8. Despliegue en Apache Tomcat
 
-Copiar el archivo WAR al directorio de aplicaciones de Tomcat:
+Copiar el archivo WAR al directorio de aplicaciones:
 
 ```bash
 sudo cp target/gatry-proveedores-web.war /var/lib/tomcat10/webapps/
 ```
 
-Reiniciar el servicio:
+Reiniciar Tomcat:
 
 ```bash
 sudo systemctl restart tomcat10
 ```
 
-Verificar su estado:
+Verificar el servicio:
 
 ```bash
 sudo systemctl status tomcat10 --no-pager
 ```
 
-## 9. Acceso a la aplicación
+## 9. Acceso a los módulos
 
-Una vez desplegada correctamente, la aplicación está disponible en:
+Una vez desplegada la aplicación:
+
+**Gestión de proveedores:**
 
 ```text
 http://localhost:8080/gatry-proveedores-web/proveedores
 ```
 
+**Gestión de clientes:**
+
+```text
+http://localhost:8080/gatry-proveedores-web/clientes
+```
+
 ## 10. Pruebas realizadas
 
-Se realizaron pruebas funcionales sobre las operaciones principales del módulo:
+Se verificó la construcción del proyecto mediante Maven y su despliegue en Apache Tomcat.
 
-- **Crear:** registro de nuevos proveedores.
-- **Consultar:** visualización de los proveedores almacenados.
-- **Actualizar:** modificación de los datos de un proveedor.
-- **Eliminar:** eliminación de un proveedor mediante confirmación.
+También se realizaron pruebas funcionales de las operaciones CRUD:
 
-También se verificó la compilación del proyecto con Maven y su despliegue en Apache Tomcat.
+- **Proveedores:** operaciones de registro, consulta, actualización y eliminación.
+- **Clientes:** operaciones de registro, consulta, actualización y eliminación.
 
-## 11. Control de versiones
+En el módulo de clientes se comprobó la modificación de información y la eliminación de un registro de prueba.
 
-El proyecto utiliza Git para el seguimiento de cambios y la administración de versiones del código fuente.
+## 11. Estándares y buenas prácticas
 
-Se excluyen del control de versiones los archivos generados durante la construcción, las configuraciones locales de los editores y los archivos que puedan contener credenciales.
+Durante el desarrollo se aplicaron las siguientes prácticas:
 
-## 12. Proyecto
+- Separación de responsabilidades mediante MVC.
+- Uso de clases DAO para las operaciones de persistencia.
+- Uso de `PreparedStatement` para ejecutar consultas parametrizadas.
+- Administración de recursos JDBC mediante `try-with-resources`.
+- Validación de datos recibidos desde los formularios.
+- Escape de caracteres HTML para presentar datos dinámicos.
+- Uso de variables de entorno para las credenciales de conexión.
+- Organización de paquetes y clases por módulo.
 
-**Nombre:** Gatry Security & Technology
-**Módulo:** Gestión de proveedores
-**Tecnología principal:** Java con Jakarta Servlets y JSP
-**Base de datos:** MySQL
+## 12. Control de versiones
+
+El proyecto utiliza Git para registrar los cambios y GitHub como repositorio remoto.
+
+Se excluyen del control de versiones los archivos generados durante la construcción, configuraciones locales y archivos que puedan contener credenciales.
+
+Repositorio:
+
+https://github.com/Segari08/gatry-proveedores-web.git
+
+## 13. Información del proyecto
+
+**Proyecto:** Gatry Security & Technology
+**Módulos desarrollados:** Gestión de proveedores y gestión de clientes
+**Backend:** Java, Jakarta Servlets y JSP
+**Persistencia:** MySQL mediante JDBC
+**Servidor:** Apache Tomcat 10.1
+**Construcción:** Apache Maven
